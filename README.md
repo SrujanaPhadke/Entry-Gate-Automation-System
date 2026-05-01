@@ -4,13 +4,9 @@ AI-powered gate monitoring with YOLO number plate detection, OCR text extraction
 
 ## Live Demo
 
-Render URL:
+[Live App on Render](https://entry-gate-automation.onrender.com)
 
-```text
-https://entry-gate-automation.onrender.com
-```
-
-If the URL shows Render's `Not Found` page, create/connect the Render web service using the settings in the **Deploy On Render** section below. The codebase already includes `render.yaml`, `runtime.txt`, and a Render-safe `requirements.txt`.
+If the link shows Render's `Not Found` page, the Render service has not been created yet. Use the **Deploy On Render** section below or create a Blueprint from `render.yaml`.
 
 ## What This System Does
 
@@ -115,6 +111,16 @@ http://localhost:8501
 
 ## Deploy On Render
 
+Fastest option:
+
+1. Open Render.
+2. Create a new **Blueprint**.
+3. Connect this GitHub repository.
+4. Select `render.yaml`.
+5. Deploy.
+
+Manual option:
+
 Create a new Render service with:
 
 ```text
@@ -137,9 +143,7 @@ streamlit run app.py --server.port $PORT --server.address 0.0.0.0
 
 Expected live URL:
 
-```text
-https://entry-gate-automation.onrender.com
-```
+[https://entry-gate-automation.onrender.com](https://entry-gate-automation.onrender.com)
 
 The repository also includes `render.yaml`, so Render can read the same configuration from the repo.
 
