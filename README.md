@@ -1,64 +1,64 @@
-# Entry Gate Automation System
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Inter&weight=700&size=34&duration=2500&pause=800&color=2563EB&center=true&vCenter=true&width=900&lines=Entry+Gate+Automation+System;YOLO+Number+Plate+Detection;OCR+Entry+%2F+Exit+Logging" alt="Entry Gate Automation animated title">
+</p>
 
-AI-powered gate monitoring with YOLO number plate detection, OCR text extraction, and clean entry/exit logs.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit">
+  <img src="https://img.shields.io/badge/YOLO-Ultralytics-111827?style=for-the-badge" alt="YOLO">
+  <img src="https://img.shields.io/badge/OpenCV-Computer%20Vision-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white" alt="OpenCV">
+  <img src="https://img.shields.io/badge/EasyOCR-Plate%20Text-22C55E?style=for-the-badge" alt="EasyOCR">
+</p>
 
-## What This System Does
+<p align="center">
+  <b>AI-powered vehicle entry monitoring for images, videos, and live cameras.</b>
+</p>
 
-This project turns a normal gate camera workflow into an automated vehicle logging system:
+---
 
-- Detects number plates with Ultralytics YOLO
-- Extracts text with EasyOCR
-- Supports image upload, recorded video, and live camera input
-- Saves entry and exit records in SQLite
-- Filters duplicate detections with a cooldown window
-- Exports logs and video detection reports as CSV
-- Supports custom YOLO weights through `models/best.pt` or sidebar upload
+## System Snapshot
+
+```mermaid
+flowchart LR
+    A[Vehicle Image / Video / Camera] --> B[YOLO Plate Detection]
+    B --> C[Plate Crop + Enhancement]
+    C --> D[EasyOCR Text Extraction]
+    D --> E[Plate Cleaning + Pattern Correction]
+    E --> F[SQLite Entry/Exit Logs]
+    F --> G[Streamlit Dashboard + CSV Export]
+```
+
+## What It Does
+
+This project turns gate footage into a clean automated logging system:
+
+- Detects vehicle number plates with a YOLO model.
+- Extracts plate text with EasyOCR.
+- Works with image upload, recorded video, and live camera input.
+- Stores entry and exit records in SQLite.
+- Prevents duplicate logs using a cooldown window.
+- Exports logs and video reports as CSV.
+- Supports custom YOLO weights through `models/best.pt` or sidebar upload.
 
 ## Core Modes
 
-### Image Detection
-
-Upload a vehicle image and get:
-
-- Original image preview
-- YOLO bounding boxes
-- Cropped plate regions
-- Enhanced OCR debug crops
-- Extracted vehicle number
-- Entry/exit log action
-
-### Video Detection
-
-Upload recorded footage and get:
-
-- Frame-by-frame YOLO plate detection
-- OCR output per detected plate
-- Duplicate filtering
-- Detection metrics
-- Annotated sample frames
-- Processed video preview
-- CSV detection report
-
-### Live Camera Detection
-
-Use webcam source `0` or an IP/RTSP camera URL and get:
-
-- Real-time plate detection
-- Buffered crop selection for sharper OCR
-- Best live crop preview
-- Entry and exit log updates
-- Duplicate detection protection
+| Mode | What You Get |
+|---|---|
+| Image Detection | Original image, YOLO box, cropped plate, OCR debug crops, extracted number |
+| Video Detection | Frame-by-frame detection, OCR table, sample frames, processed video preview |
+| Live Camera Detection | Real-time feed, buffered sharp crop selection, entry/exit events |
+| Logs | Search, status filter, SQLite records, CSV export |
 
 ## Tech Stack
 
-- Python 3.10
-- Streamlit
-- Ultralytics YOLO
-- EasyOCR
-- OpenCV headless
-- Torch / Torchvision
-- SQLite
-- Pandas
+| Layer | Tools |
+|---|---|
+| UI | Streamlit |
+| Detection | Ultralytics YOLO |
+| OCR | EasyOCR |
+| Vision | OpenCV Headless |
+| Data | SQLite, Pandas |
+| Training | Ultralytics CLI + `train.py` |
 
 ## Project Structure
 
@@ -109,7 +109,7 @@ The default model path is:
 models/best.pt
 ```
 
-The included model is ready for local testing. For better accuracy, train your own model using images from the actual gate camera angle and lighting.
+Use the included model for local testing, or replace it with your own trained number plate detector.
 
 ## Database
 
@@ -130,8 +130,8 @@ CREATE TABLE vehicle_logs (
 
 ## Entry And Exit Logic
 
-- First detection of a vehicle creates an `inside` entry.
-- Re-detection after the cooldown updates `exit_time` and marks the vehicle `exited`.
+- First detection creates an `inside` entry.
+- Re-detection after cooldown updates `exit_time` and marks the vehicle `exited`.
 - Repeated detections inside the duplicate window are ignored.
 
 ## Train A Custom YOLO Plate Model
@@ -189,7 +189,7 @@ streamlit run app.py
 - Keep `Analyze every Nth frame` at `1` for video accuracy.
 - Lower YOLO confidence if plates are missed.
 - Raise OCR confidence to reduce weak OCR guesses.
-- Train a custom YOLO model for your camera angle.
+- Train a custom YOLO model for your exact camera angle.
 
 ## Repository
 
