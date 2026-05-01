@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.py[cod]
+.env
+venv/
+.venv/
+
+data/logs.db
+data/uploads/*
+data/outputs/*
+!data/uploads/.gitkeep
+!data/outputs/.gitkeep
+
+streamlit.log
+streamlit.err.log
+runs/
+dataset/
