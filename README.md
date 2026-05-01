@@ -1,19 +1,74 @@
 # Entry Gate Automation System
 
-An intelligent vehicle entry/exit monitoring system that detects number plates with Ultralytics YOLO, extracts vehicle numbers with OCR, and stores entry/exit logs in SQLite.
+AI-powered gate monitoring with YOLO number plate detection, OCR text extraction, and clean entry/exit logs.
 
-## Features
+## Live Demo
 
-- Image input mode for uploaded vehicle photos
-- Video input mode for recorded gate footage
-- Live camera mode for webcam or IP camera streams
-- YOLO number plate detection using `models/best.pt` or an uploaded `.pt` file
-- EasyOCR-based plate text extraction
-- Indian vehicle number cleaning and normalization, such as `MH12AB1234`, `DL01CA1234`, and `GJ05XY9876`
-- Entry/exit logging with duplicate filtering and configurable cooldown
-- Searchable logs table with status filter
-- CSV export for logs and video detection reports
-- Custom YOLO training support through Ultralytics
+Render URL:
+
+```text
+https://entry-gate-automation.onrender.com
+```
+
+If the URL shows Render's `Not Found` page, create/connect the Render web service using the settings in the **Deploy On Render** section below. The codebase already includes `render.yaml`, `runtime.txt`, and a Render-safe `requirements.txt`.
+
+## What This System Does
+
+This project turns a normal gate camera workflow into an automated vehicle logging system:
+
+- Detects number plates with Ultralytics YOLO
+- Extracts text with EasyOCR
+- Supports image upload, recorded video, and live camera input
+- Saves entry and exit records in SQLite
+- Filters duplicate detections with a cooldown window
+- Exports logs and video detection reports as CSV
+- Supports custom YOLO weights through `models/best.pt` or sidebar upload
+
+## Core Modes
+
+### Image Detection
+
+Upload a vehicle image and get:
+
+- Original image preview
+- YOLO bounding boxes
+- Cropped plate regions
+- Enhanced OCR debug crops
+- Extracted vehicle number
+- Entry/exit log action
+
+### Video Detection
+
+Upload recorded footage and get:
+
+- Frame-by-frame YOLO plate detection
+- OCR output per detected plate
+- Duplicate filtering
+- Detection metrics
+- Annotated sample frames
+- Processed video preview
+- CSV detection report
+
+### Live Camera Detection
+
+Use webcam source `0` or an IP/RTSP camera URL and get:
+
+- Real-time plate detection
+- Buffered crop selection for sharper OCR
+- Best live crop preview
+- Entry and exit log updates
+- Duplicate detection protection
+
+## Tech Stack
+
+- Python 3.10
+- Streamlit
+- Ultralytics YOLO
+- EasyOCR
+- OpenCV headless
+- Torch / Torchvision
+- SQLite
+- Pandas
 
 ## Project Structure
 
@@ -22,6 +77,8 @@ entry-gate-automation/
   app.py
   train.py
   requirements.txt
+  runtime.txt
+  render.yaml
   README.md
   models/
     best.pt
@@ -38,42 +95,15 @@ entry-gate-automation/
     logs.db
 ```
 
-## Technology Stack
-
-- Python
-- OpenCV
-- Ultralytics YOLOv8 or YOLO11
-- EasyOCR
-- Streamlit
-- SQLite
-- Pandas
-
-## Setup
-
-Open PowerShell in the project folder:
+## Run Locally
 
 ```powershell
 cd "D:\AIML Internship\entry-gate-automation"
-```
-
-Create and activate a virtual environment:
-
-```powershell
 python -m venv .venv
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
-```
-
-Install dependencies:
-
-```powershell
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-```
-
-Run the application:
-
-```powershell
 streamlit run app.py
 ```
 
@@ -83,15 +113,45 @@ Open:
 http://localhost:8501
 ```
 
-## YOLO Model Weights
+## Deploy On Render
 
-The application loads the default model from:
+Create a new Render service with:
+
+```text
+Service Type: Web Service
+Environment: Python
+Branch: main
+```
+
+Build Command:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start Command:
+
+```bash
+streamlit run app.py --server.port $PORT --server.address 0.0.0.0
+```
+
+Expected live URL:
+
+```text
+https://entry-gate-automation.onrender.com
+```
+
+The repository also includes `render.yaml`, so Render can read the same configuration from the repo.
+
+## YOLO Model
+
+The default model path is:
 
 ```text
 models/best.pt
 ```
 
-You can also upload a custom `.pt` model from the Streamlit sidebar. For best gate accuracy, train a model using your own camera angle, lighting, plate distance, and vehicle types.
+The included model is small enough for GitHub and Render deployment. For better accuracy, train your own model using images from the actual gate camera angle and lighting.
 
 ## Database
 
@@ -110,44 +170,15 @@ CREATE TABLE vehicle_logs (
 );
 ```
 
-## Entry/Exit Logic
+## Entry And Exit Logic
 
-- If a detected vehicle has no active `inside` record, the system creates an entry log.
-- If the same vehicle is detected again after the configured cooldown and its status is `inside`, the system records `exit_time` and marks it `exited`.
-- Repeated detections inside the duplicate window are ignored to prevent noisy logs.
+- First detection of a vehicle creates an `inside` entry.
+- Re-detection after the cooldown updates `exit_time` and marks the vehicle `exited`.
+- Repeated detections inside the duplicate window are ignored.
 
-## Image Mode Testing
+## Train A Custom YOLO Plate Model
 
-1. Select `Image Detection`.
-2. Upload a clear image of a vehicle.
-3. The dashboard displays the original image, YOLO bounding boxes, cropped number plate, OCR text, and log action.
-
-## Video Mode Testing
-
-1. Select `Video Detection`.
-2. Upload a video file such as `.mp4`, `.avi`, `.mov`, or `.mkv`.
-3. Keep `Analyze every Nth frame` at `1` for full frame-by-frame processing.
-4. Click `Process Video`.
-5. The dashboard displays total frames, frames analyzed, YOLO detections, readable plates, frame-by-frame results, sample frames, and processed video preview.
-
-## Live Camera Testing
-
-1. Select `Live Camera Detection`.
-2. Use camera source `0` for your webcam, or paste an IP camera URL.
-3. Set the number of frames to process.
-4. Click `Start Camera`.
-5. The dashboard shows the live annotated feed and entry/exit events.
-
-## Logs
-
-1. Select `Logs`.
-2. Search by vehicle number.
-3. Filter by `all`, `inside`, or `exited`.
-4. Click `Download CSV` to export logs.
-
-## Train a Custom YOLO Number Plate Model
-
-Prepare your dataset in Ultralytics YOLO format:
+Dataset format:
 
 ```text
 dataset/
@@ -170,37 +201,19 @@ names:
   0: number_plate
 ```
 
-Train with the Ultralytics CLI:
+Train with Ultralytics:
 
 ```powershell
 yolo detect train data=dataset/data.yaml model=yolov8n.pt epochs=50 imgsz=640
 ```
 
-Or use the included training helper:
+Or use the helper:
 
 ```powershell
 python train.py --data dataset/data.yaml --model yolov8n.pt --epochs 50 --imgsz 640 --copy-best
 ```
 
-YOLO11 example:
-
-```powershell
-python train.py --data dataset/data.yaml --model yolo11n.pt --epochs 50 --imgsz 640 --copy-best
-```
-
-After training, copy:
-
-```text
-runs/detect/train/weights/best.pt
-```
-
-or the helper run output:
-
-```text
-runs/detect/number_plate/weights/best.pt
-```
-
-to:
+Copy the trained weights to:
 
 ```text
 models/best.pt
@@ -212,10 +225,16 @@ Then restart:
 streamlit run app.py
 ```
 
-## Notes for Better Accuracy
+## Accuracy Tips
 
-- Use high-resolution frames where the plate is visible and not blurred.
-- Keep `Analyze every Nth frame` at `1` for best video detection.
+- Use clear, close plate images.
+- Keep `Analyze every Nth frame` at `1` for video accuracy.
 - Lower YOLO confidence if plates are missed.
-- Lower OCR confidence slightly if YOLO detects crops but text is not extracted.
-- Train your own model for your exact gate camera angle and lighting.
+- Raise OCR confidence to reduce weak OCR guesses.
+- Train a custom YOLO model for your camera angle.
+
+## Repository
+
+```text
+https://github.com/SrujanaPhadke/Entry-Gate-Automation-System.git
+```

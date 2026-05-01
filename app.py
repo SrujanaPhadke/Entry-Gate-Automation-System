@@ -26,14 +26,17 @@ st.set_page_config(page_title="Entry Gate Automation System", layout="wide")
 ensure_directories()
 
 
+@st.cache_resource
 def get_db() -> VehicleLogDB:
     return VehicleLogDB()
 
 
+@st.cache_resource
 def get_detector(model_path: str) -> NumberPlateDetector:
     return NumberPlateDetector(model_path)
 
 
+@st.cache_resource
 def get_ocr(use_gpu: bool = False) -> PlateOCR:
     return PlateOCR(gpu=use_gpu)
 
@@ -377,6 +380,7 @@ def main() -> None:
         uploaded_model = st.file_uploader("Optional custom YOLO model (.pt)", type=["pt"])
         model_path = save_uploaded_model(uploaded_model)
         st.caption(f"Using model: {model_path}")
+        st.caption(f"Active thresholds: YOLO {confidence:.2f}, OCR {ocr_confidence:.2f}")
 
     try:
         db, detector, ocr = load_services(model_path, use_gpu_ocr)
@@ -385,9 +389,6 @@ def main() -> None:
         st.info("Place trained YOLO weights at models/best.pt or upload a .pt file from the sidebar.")
         show_logs(get_db())
         return
-
-    st.write("YOLO CONF:", confidence)
-    st.write("OCR CONF:", ocr_confidence)
 
     if mode == "Image Detection":
         image_page(
