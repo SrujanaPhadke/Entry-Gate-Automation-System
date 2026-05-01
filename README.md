@@ -2,12 +2,6 @@
 
 AI-powered gate monitoring with YOLO number plate detection, OCR text extraction, and clean entry/exit logs.
 
-## Live Demo
-
-[Live App on Render](https://entry-gate-automation.onrender.com)
-
-If the link shows Render's `Not Found` page, the Render service has not been created yet. Use the **Deploy On Render** section below or create a Blueprint from `render.yaml`.
-
 ## What This System Does
 
 This project turns a normal gate camera workflow into an automated vehicle logging system:
@@ -73,8 +67,6 @@ entry-gate-automation/
   app.py
   train.py
   requirements.txt
-  runtime.txt
-  render.yaml
   README.md
   models/
     best.pt
@@ -109,44 +101,6 @@ Open:
 http://localhost:8501
 ```
 
-## Deploy On Render
-
-Fastest option:
-
-1. Open Render.
-2. Create a new **Blueprint**.
-3. Connect this GitHub repository.
-4. Select `render.yaml`.
-5. Deploy.
-
-Manual option:
-
-Create a new Render service with:
-
-```text
-Service Type: Web Service
-Environment: Python
-Branch: main
-```
-
-Build Command:
-
-```bash
-pip install -r requirements.txt
-```
-
-Start Command:
-
-```bash
-streamlit run app.py --server.port $PORT --server.address 0.0.0.0
-```
-
-Expected live URL:
-
-[https://entry-gate-automation.onrender.com](https://entry-gate-automation.onrender.com)
-
-The repository also includes `render.yaml`, so Render can read the same configuration from the repo.
-
 ## YOLO Model
 
 The default model path is:
@@ -155,7 +109,7 @@ The default model path is:
 models/best.pt
 ```
 
-The included model is small enough for GitHub and Render deployment. For better accuracy, train your own model using images from the actual gate camera angle and lighting.
+The included model is ready for local testing. For better accuracy, train your own model using images from the actual gate camera angle and lighting.
 
 ## Database
 
